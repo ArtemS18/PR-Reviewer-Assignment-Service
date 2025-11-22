@@ -6,9 +6,10 @@ async def main():
     if sys.argv[1] == "locust_test":
         seed_db.fill_db()
         await stress_test.run_stress_test()
-        seed_db.truncate_db()
     elif sys.argv[1] == "fill_db":
         seed_db.fill_db()
+    elif sys.argv[1] == "drop_db":
+        seed_db.truncate_db()
     else:
         raise RuntimeError("unexpect command")
 

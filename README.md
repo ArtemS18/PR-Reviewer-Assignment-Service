@@ -71,6 +71,7 @@ go test ./internal/app/service/...
 cd testing
 pip install -r req.txt
 ```
+---
 
 Запуск WEB-интерфейс на порту ```http://localhost:8089``` стресс-теста locusto (длится 1 минуту):
 
@@ -85,14 +86,20 @@ python main.py locust_test
 ![alt text](docs/image-1.png)
 
 После теста users и teams очищаются
+---
 
 Наполнить users (200) и teams (20) тестовыми данными :
-
-Python-скрипт
 
 ```
 python main.py fill_db
 ```
+
+Удаляет данные :
+
+```
+python main.py drop_db
+```
 ---
+
 
 
