@@ -34,6 +34,7 @@
    DB_NAME=postgres
    DB_USER=postgres
    DB_PASS=postgres
+   DB_OPEN_PORT=5433 #порт на который пробрасывается бд
    ```
 
 
@@ -72,17 +73,18 @@ pip install -r req.txt
 ```
 
 Запуск WEB-интерфейс на порту ```http://localhost:8089``` стресс-теста locusto (длится 1 минуту):
-(бд с тестовыми данными заполняется автоматически)
+
 ```
 python main.py locust_test
 ```
 Для запуска теста нажмите Start
+(бд с тестовыми данными заполняется автоматически)
 
 Пример вывода теста:
 ![alt text](docs/image.png)
 ![alt text](docs/image-1.png)
 
-после теста users и teams очищаются
+После теста users и teams очищаются
 
 Наполнить users (200) и teams (20) тестовыми данными :
 

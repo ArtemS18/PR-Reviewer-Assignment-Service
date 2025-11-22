@@ -3,7 +3,7 @@ import random
 import string
 import uuid
 
-import psycopg2
+import psycopg
 
 import config
 
@@ -13,14 +13,13 @@ def rand_suffix(length: int = 8) -> str:
         random.choices(string.ascii_lowercase + string.digits, k=length)
     )
 def truncate_db():
-    conn = psycopg2.connect(
+    conn = psycopg.connect(
         host=config.DB_HOST,
         port=config.DB_PORT,
         dbname=config.DB_NAME,
         user=config.DB_USER,
         password=config.DB_PASS,
     )
-    conn.autocommit = False
     cur = conn.cursor()
     cur.execute("TRUNCATE reviewers, pull_requests, users, teams RESTART IDENTITY CASCADE;")
     conn.commit()
@@ -28,7 +27,7 @@ def truncate_db():
     conn.close()
 
 def fill_db():
-    conn = psycopg2.connect(
+    conn = psycopg.connect(
         host=config.DB_HOST,
         port=config.DB_PORT,
         dbname=config.DB_NAME,

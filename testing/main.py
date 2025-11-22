@@ -3,7 +3,7 @@ from src import seed_db, stress_test
 import sys
 
 async def main():
-    if sys.argv[1] == "test":
+    if sys.argv[1] == "locust_test":
         seed_db.fill_db()
         await stress_test.run_stress_test()
         seed_db.truncate_db()
