@@ -92,7 +92,7 @@ def run_stress_test():
         "locust",
         "-f", "src/stress_test.py",
         f"--host={config.BASE_URL}",
-        "--headless", "-u", "10", "-r", "2", "-t", "1m",
+        "-u", "10", "-r", "2", "-t", "1m",
     ]
     main.main()
 
