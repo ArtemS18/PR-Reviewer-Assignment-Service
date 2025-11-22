@@ -98,7 +98,5 @@ python main.py locust_test
 ![alt text](docs/image.png)
 ![alt text](docs/image-1.png)
 
-После теста users и teams очищаются
-
 
 
