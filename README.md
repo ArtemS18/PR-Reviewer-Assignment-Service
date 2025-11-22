@@ -72,7 +72,6 @@ cd testing
 pip install -r req.txt
 ```
 ---
----
 
 Наполнить users (200) и teams (20) тестовыми данными :
 
