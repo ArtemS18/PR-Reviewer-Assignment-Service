@@ -6,9 +6,9 @@ import (
 )
 
 type PullRequestCreateDTO struct {
-	ID       string `json:"pull_request_id"`
-	Name     string `json:"pull_request_name"`
-	AuthorID string `json:"author_id"`
+	ID       string `json:"pull_request_id" binding:"required"`
+	Name     string `json:"pull_request_name" binding:"required"`
+	AuthorID string `json:"author_id" binding:"required"`
 }
 type PullRequestDTO struct {
 	ID       string     `json:"pull_request_id"`

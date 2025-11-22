@@ -2,9 +2,8 @@ package handlers_test
 
 import (
 	"reviewer-api/internal/app/http-server/handlers"
-	"reviewer-api/internal/app/http-server/handlers/pk"
-	"reviewer-api/internal/app/http-server/handlers/team"
-	"reviewer-api/internal/app/http-server/handlers/user"
+	"reviewer-api/internal/app/repository/mocks"
+	"reviewer-api/internal/app/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,12 +11,16 @@ import (
 func setupRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
+	teamService := service.NewTeamService(mocks.MockTeamRepo{})
+	userService := service.NewUserService(mocks.MockUserRepo{})
+	prService := service.NewPullRequestService(mocks.MockPRRepo{})
 
 	h := &handlers.Handlers{
-		Team: team.NewTeamHandler(&mockTeamRepo{}),
-		User: user.NewUserHandler(&mockUserRepo{}),
-		PR:   pk.NewPKHandler(&mockPKRepo{}),
+		Team: handlers.NewTeamHandler(teamService),
+		User: handlers.NewUserHandler(userService),
+		PR:   handlers.NewPKHandler(prService),
 	}
+
 	h.Register(r)
 
 	return r

@@ -12,6 +12,7 @@ var ErrTeamAlreadyExists = fmt.Errorf("team already exists")
 var ErrPRAlreadyExists = fmt.Errorf("pr already exists")
 var ErrUnexpect = fmt.Errorf("unexpect err")
 var ErrReassign = fmt.Errorf("cannot reassign on merged PR")
+var ErrBadRequest = fmt.Errorf("bad request")
 
 func HandelPgError(err error, table string) error {
 	pqErr, ok := err.(*pgconn.PgError)

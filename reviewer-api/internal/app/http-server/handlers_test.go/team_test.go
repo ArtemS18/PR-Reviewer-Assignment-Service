@@ -31,7 +31,7 @@ func TestGetTeam_NotFound(t *testing.T) {
 
 func TestAddTeam(t *testing.T) {
 	r := setupRouter()
-	body := `{"name":"Team","members":[]}`
+	body := `{"team_name":"Team","members":[]}`
 	req, _ := http.NewRequest("POST", "/team/add", bytes.NewBufferString(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()

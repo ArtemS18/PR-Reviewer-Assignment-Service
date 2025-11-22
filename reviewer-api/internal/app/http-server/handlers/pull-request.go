@@ -1,4 +1,4 @@
-package pk
+package handlers
 
 import (
 	"net/http"
@@ -9,18 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PKRepository interface {
+type PKService interface {
 	CreatePullRequest(pkDTO dto.PullRequestCreateDTO) (ds.PullRequest, error)
 	ReassignReviewer(pk_id string, old_reviewer_id string) (ds.PullRequest, error)
 	Merged(pk_id string) (ds.PullRequest, error)
 }
 
 type PKHandler struct {
-	repo PKRepository
+	s PKService
 }
 
-func NewPKHandler(repo PKRepository) *PKHandler {
-	return &PKHandler{repo: repo}
+func NewPKHandler(s PKService) *PKHandler {
+	return &PKHandler{s: s}
 }
 
 func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {
@@ -31,8 +31,9 @@ func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {
 			http.StatusBadRequest,
 			pkg.BAD_REQUEST,
 		)
+		return
 	}
-	team, err := h.repo.CreatePullRequest(pkDTO)
+	team, err := h.s.CreatePullRequest(pkDTO)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return
@@ -41,8 +42,8 @@ func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {
 }
 
 type ReassgnPRSchema struct {
-	PullRequestID string `json:"pull_request_id"`
-	OldRevID      string `json:"old_reviewer_id"`
+	PullRequestID string `json:"pull_request_id" binding:"required"`
+	OldRevID      string `json:"old_reviewer_id" binding:"required"`
 }
 
 func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
@@ -53,8 +54,9 @@ func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
 			http.StatusBadRequest,
 			pkg.BAD_REQUEST,
 		)
+		return
 	}
-	pr, err := h.repo.ReassignReviewer(raw.PullRequestID, raw.OldRevID)
+	pr, err := h.s.ReassignReviewer(raw.PullRequestID, raw.OldRevID)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return
@@ -63,7 +65,7 @@ func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
 }
 
 type MergedPRSchema struct {
-	PullRequestID string `json:"pull_request_id"`
+	PullRequestID string `json:"pull_request_id" binding:"required"`
 }
 
 func (h *PKHandler) MergedPR(ctx *gin.Context) {
@@ -74,8 +76,9 @@ func (h *PKHandler) MergedPR(ctx *gin.Context) {
 			http.StatusBadRequest,
 			pkg.BAD_REQUEST,
 		)
+		return
 	}
-	pr, err := h.repo.Merged(raw.PullRequestID)
+	pr, err := h.s.Merged(raw.PullRequestID)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return

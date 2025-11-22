@@ -1,28 +1,30 @@
-package user
+package handlers
 
 import (
+	"log"
 	"net/http"
 	"reviewer-api/internal/app/ds"
+	"reviewer-api/internal/app/dto"
 	pkg "reviewer-api/internal/pkg/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UserRepository interface {
+type UserService interface {
 	SetUserFlag(user_id string, is_active bool) (ds.User, error)
 	GetReview(user_id string) (ds.User, error)
 }
 
 type UserHandler struct {
-	repo UserRepository
+	s UserService
 }
 
-func NewUserHandler(repo UserRepository) *UserHandler {
-	return &UserHandler{repo: repo}
+func NewUserHandler(s UserService) *UserHandler {
+	return &UserHandler{s: s}
 }
 
 type UserUpdateSchema struct {
-	UserId   string `json:"user_id"`
+	UserId   string `json:"user_id" binding:"required"`
 	IsActive bool   `json:"is_active"`
 }
 
@@ -30,17 +32,19 @@ func (h *UserHandler) UpdateUserActivity(ctx *gin.Context) {
 	var userData UserUpdateSchema
 	err := ctx.BindJSON(&userData)
 	if err != nil {
+		log.Println(err)
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
 			pkg.BAD_REQUEST,
 		)
+		return
 	}
-	user, err := h.repo.SetUserFlag(userData.UserId, userData.IsActive)
+	user, err := h.s.SetUserFlag(userData.UserId, userData.IsActive)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return
 	}
-	pkg.OkResponse(ctx, user)
+	pkg.OkResponse(ctx, dto.ToUserWithTeamDTO(user))
 }
 
 func (h *UserHandler) GetUserReview(ctx *gin.Context) {
@@ -52,10 +56,10 @@ func (h *UserHandler) GetUserReview(ctx *gin.Context) {
 		)
 		return
 	}
-	user, err := h.repo.GetReview(userName)
+	user, err := h.s.GetReview(userName)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return
 	}
-	pkg.OkResponse(ctx, user)
+	pkg.OkResponse(ctx, dto.ToUserReviewDTO(user))
 }

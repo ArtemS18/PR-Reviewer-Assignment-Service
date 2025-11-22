@@ -1,4 +1,4 @@
-package team
+package handlers
 
 import (
 	"net/http"
@@ -9,17 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TeamRepository interface {
+type TeamService interface {
 	GetTeam(team_name string) (ds.Team, error)
 	AddTeam(teamData dto.TeamDTO) (ds.Team, error)
 }
 
 type TeamHandler struct {
-	repo TeamRepository
+	s TeamService
 }
 
-func NewTeamHandler(repo TeamRepository) *TeamHandler {
-	return &TeamHandler{repo: repo}
+func NewTeamHandler(s TeamService) *TeamHandler {
+	return &TeamHandler{s: s}
 }
 
 func (h *TeamHandler) GetTeam(ctx *gin.Context) {
@@ -31,7 +31,7 @@ func (h *TeamHandler) GetTeam(ctx *gin.Context) {
 		)
 		return
 	}
-	team, err := h.repo.GetTeam(teamName)
+	team, err := h.s.GetTeam(teamName)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return
@@ -48,7 +48,7 @@ func (h *TeamHandler) AddTeam(ctx *gin.Context) {
 			pkg.BAD_REQUEST,
 		)
 	}
-	team, err := h.repo.AddTeam(teamDTO)
+	team, err := h.s.AddTeam(teamDTO)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return

@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (p *Postgres) SetUserFlag(user_id string, is_active bool) (ds.User, error) {
+func (p *Postgres) SetUserFlagDB(user_id string, is_active bool) (ds.User, error) {
 	var user ds.User
 	res := p.db.Model(&ds.User{}).Where("id = ?", user_id).Clauses(clause.Returning{}).Update("is_active", is_active).Scan(&user)
 	if res.Error != nil {
@@ -16,10 +16,11 @@ func (p *Postgres) SetUserFlag(user_id string, is_active bool) (ds.User, error) 
 	if res.RowsAffected == 0 {
 		return ds.User{}, repository.ErrNotFound
 	}
+	_ = p.db.Model(&ds.User{}).Preload("Team").Where("id = ?", user_id).First(&user)
 	return user, nil
 }
 
-func (p *Postgres) GetReview(user_id string) (ds.User, error) {
+func (p *Postgres) GetReviewDB(user_id string) (ds.User, error) {
 	var user ds.User
 	err := p.db.Model(&ds.User{}).Preload("Assigned").Where("id = ?", user_id).First(&user).Error
 	if err != nil {

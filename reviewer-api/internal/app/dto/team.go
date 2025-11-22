@@ -3,7 +3,7 @@ package dto
 import "reviewer-api/internal/app/ds"
 
 type TeamDTO struct {
-	Name    string    `json:"team_name"`
+	Name    string    `json:"team_name" binding:"required"`
 	Members []UserDTO `json:"members"`
 }
 
@@ -13,7 +13,7 @@ func ToTeamDTO(teamORM ds.Team) TeamDTO {
 		usersDTO = append(usersDTO, ToUserDTO(user))
 	}
 	return TeamDTO{
-		Name:    teamORM.ID,
+		Name:    teamORM.Name,
 		Members: usersDTO,
 	}
 }
