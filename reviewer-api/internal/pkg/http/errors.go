@@ -29,6 +29,11 @@ func HandelError(ctx *gin.Context, err error) {
 			http.StatusConflict,
 			PR_MERGED,
 		)
+	case repository.ErrNotEnoughtAssigned:
+		ctx.AbortWithStatusJSON(
+			http.StatusConflict,
+			NOT_ENOUGHT,
+		)
 
 	default:
 		ctx.AbortWithStatusJSON(

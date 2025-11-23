@@ -3,6 +3,7 @@ package mocks
 import (
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/repository"
+	"reviewer-api/internal/app/service/pull_request"
 )
 
 type MockPRRepo struct {
@@ -72,4 +73,8 @@ func (m MockPRRepo) UpdateReviewersDB(r ds.Reviewer) error {
 		return repository.ErrNotFound
 	}
 	return nil
+}
+
+func (m MockPRRepo) WithPRTransaction(fn pull_request.TxFunc) error {
+	return fn(m)
 }

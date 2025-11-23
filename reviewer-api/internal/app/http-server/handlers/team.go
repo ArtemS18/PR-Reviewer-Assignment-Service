@@ -12,6 +12,7 @@ import (
 type TeamService interface {
 	GetTeam(team_name string) (ds.Team, error)
 	AddTeam(teamData dto.TeamDTO) (ds.Team, error)
+	DeactivateTeam(teamName string) (ds.Team, error)
 }
 
 type TeamHandler struct {
@@ -54,4 +55,25 @@ func (h *TeamHandler) AddTeam(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, dto.ToTeamDTO(team))
+}
+
+type DeactivateTeamSchema struct {
+	TeamName string `json:"team_name" binding:"required"`
+}
+
+func (h *TeamHandler) DeactivateTeam(ctx *gin.Context) {
+	var teamDTO DeactivateTeamSchema
+	err := ctx.BindJSON(&teamDTO)
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			pkg.BAD_REQUEST,
+		)
+	}
+	team, err := h.s.DeactivateTeam(teamDTO.TeamName)
+	if err != nil {
+		pkg.HandelError(ctx, err)
+		return
+	}
+	pkg.OkResponse(ctx, dto.ToTeamDTO(team))
 }

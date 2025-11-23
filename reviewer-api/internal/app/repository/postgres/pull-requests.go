@@ -1,8 +1,11 @@
 package postgres
 
 import (
+	"fmt"
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/repository"
+
+	"gorm.io/gorm"
 )
 
 func (p *Postgres) CreatePullRequestDB(pk ds.PullRequest) (ds.PullRequest, error) {
@@ -68,4 +71,44 @@ func (p *Postgres) GetMemberIDsDB(excludedID, pkID string) ([]string, error) {
 		return nil, repository.HandelPgError(err, "users")
 	}
 	return memberIDs, nil
+}
+
+func (p *Postgres) ReassgnUsersDB(assignedMap map[string]string, deactivatedIDs []string) error {
+	if len(assignedMap) == 0 || len(deactivatedIDs) == 0 {
+		return nil
+	}
+
+	caseExpr := "CASE reviewers.user_id"
+	for oldID, newID := range assignedMap {
+		caseExpr += fmt.Sprintf(" WHEN '%s' THEN '%s'", oldID, newID)
+	}
+	caseExpr += " END"
+
+	openPRSub := p.db.Model(&ds.PullRequest{}).
+		Select("id").
+		Where("status = ?", string(ds.OPEN))
+
+	err := p.db.Model(&ds.Reviewer{}).
+		Where("user_id IN ?", deactivatedIDs).
+		Where("pull_request_id IN (?)", openPRSub).
+		Update("user_id", gorm.Expr(caseExpr)).Error
+
+	if err != nil {
+		return repository.HandelPgError(err, "users")
+	}
+	return nil
+}
+
+func (p *Postgres) GetNewAssigned(deactivated_ids []string) ([]string, error) {
+	var assignedIDs []string
+
+	_ = p.db.Model(&ds.User{}).Select("users.id").
+		Where("id NOT IN (?) AND is_active = true", deactivated_ids).
+		Limit(len(deactivated_ids) * 2).
+		Scan(&assignedIDs).Error
+
+	if len(assignedIDs) == 0 {
+		return nil, repository.ErrNotEnoughtAssigned
+	}
+	return assignedIDs, nil
 }

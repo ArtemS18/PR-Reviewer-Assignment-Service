@@ -4,6 +4,7 @@ import (
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/dto"
 	"reviewer-api/internal/app/repository"
+	"reviewer-api/internal/app/service/team"
 )
 
 type MockTeamRepo struct {
@@ -41,4 +42,16 @@ func (m MockTeamRepo) CreateOrUpdateMembers(teamID string, users []dto.UserDTO) 
 		})
 	}
 	return res, nil
+}
+func (m MockTeamRepo) ReassgnUsersDB(assignedMap map[string]string, deactivatedIDs []string) error {
+	return nil
+}
+func (m MockTeamRepo) DeactivateUsersDB(teamID string) ([]string, error) {
+	return nil, nil
+}
+func (m MockTeamRepo) GetNewAssigned(deactivated_ids []string) ([]string, error) {
+	return nil, nil
+}
+func (m MockTeamRepo) WithTeamTransaction(fn team.TxFunc) error {
+	return fn(m)
 }

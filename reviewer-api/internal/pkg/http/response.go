@@ -58,3 +58,10 @@ var PR_MERGED = ErrorResp{
 		Message: "cannot reassign on merged PR",
 	},
 }
+
+var NOT_ENOUGHT = ErrorResp{
+	Error: ErrorData{
+		Code:    "NOT_ENOUGHT",
+		Message: "not enought users for reassign PK from deactivated users",
+	},
+}

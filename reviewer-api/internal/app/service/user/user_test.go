@@ -1,15 +1,16 @@
-package service
+package user_test
 
 import (
 	"reviewer-api/internal/app/repository"
 	"reviewer-api/internal/app/repository/mocks"
+	service "reviewer-api/internal/app/service/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUserService_SetUserFlag_Success(t *testing.T) {
-	svc := NewUserService(mocks.MockUserRepo{})
+	svc := service.NewUserService(mocks.MockUserRepo{})
 
 	u, err := svc.SetUserFlag("user-1", true)
 
@@ -19,7 +20,7 @@ func TestUserService_SetUserFlag_Success(t *testing.T) {
 }
 
 func TestUserService_SetUserFlag_Error(t *testing.T) {
-	svc := NewUserService(mocks.MockUserRepo{NotFoundErr: true})
+	svc := service.NewUserService(mocks.MockUserRepo{NotFoundErr: true})
 
 	_, err := svc.SetUserFlag("user-1", true)
 
@@ -28,7 +29,7 @@ func TestUserService_SetUserFlag_Error(t *testing.T) {
 }
 
 func TestUserService_GetReview_Success(t *testing.T) {
-	svc := NewUserService(mocks.MockUserRepo{})
+	svc := service.NewUserService(mocks.MockUserRepo{})
 
 	u, err := svc.GetReview("user-1")
 
@@ -37,7 +38,7 @@ func TestUserService_GetReview_Success(t *testing.T) {
 }
 
 func TestUserService_GetReview_Error(t *testing.T) {
-	svc := NewUserService(mocks.MockUserRepo{NotFoundErr: true})
+	svc := service.NewUserService(mocks.MockUserRepo{NotFoundErr: true})
 
 	_, err := svc.GetReview("user-1")
 

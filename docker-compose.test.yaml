@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"            # хост 5433 -> контейнер 5432
+    networks:
+      - backend
+
+  reviewer-api:
+    build:
+      context: ./reviewer-api
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      ENV_FILE: .env
+    ports:
+      - "8080:${HTTP_PORT}"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  tester:
+    image: python:3.13-slim
+    working_dir: /app
+    volumes:
+      - ./testing:/app
+    environment:
+      BASE_URL: "http://reviewer-api:8080"
+      TEAMS_COUNT: "20"
+      USERS_PER_TEAM: "10"
+      SEED_DATA_FILE: "seed_data.json"
+      DURATION_SECONDS: "60"
+      RPS: "5"
+      CONCURRENCY: "10"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_NAME: "postgres"
+      DB_USER: "postgres"
+      DB_PASS: "postgres"
+    depends_on:
+      - reviewer-api
+    networks:
+      - backend
+    command: >
+      sh -c "pip install -r req.txt && tail -f /dev/null"
+
+networks:
+  backend:
+    driver: bridge

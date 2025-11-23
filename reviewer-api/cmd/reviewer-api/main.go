@@ -5,7 +5,9 @@ import (
 	"reviewer-api/internal/app/config"
 	http "reviewer-api/internal/app/http-server/handlers"
 	"reviewer-api/internal/app/repository/postgres"
-	"reviewer-api/internal/app/service"
+	"reviewer-api/internal/app/service/pull_request"
+	"reviewer-api/internal/app/service/team"
+	"reviewer-api/internal/app/service/user"
 	pkg "reviewer-api/internal/pkg/app"
 
 	"github.com/gin-gonic/gin"
@@ -23,9 +25,9 @@ func main() {
 		log.Fatal(err.Error())
 		return
 	}
-	teamService := service.NewTeamService(pg)
-	userService := service.NewUserService(pg)
-	prService := service.NewPullRequestService(pg)
+	teamService := team.NewTeamService(pg)
+	userService := user.NewUserService(pg)
+	prService := pull_request.NewPullRequestService(pg)
 
 	handl := &http.Handlers{
 		Team: http.NewTeamHandler(teamService),

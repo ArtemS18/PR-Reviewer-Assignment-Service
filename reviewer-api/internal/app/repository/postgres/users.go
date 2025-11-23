@@ -20,6 +20,27 @@ func (p *Postgres) SetUserFlagDB(user_id string, is_active bool) (ds.User, error
 	return user, nil
 }
 
+func (p *Postgres) DeactivateUsersDB(teamID string) ([]string, error) {
+	var ids []string
+	if err := p.db.Model(&ds.User{}).
+		Where("team_id = ?", teamID).
+		Pluck("id", &ids).Error; err != nil {
+		return nil, repository.HandelPgError(err, "users")
+	}
+	if len(ids) == 0 {
+		return nil, repository.ErrNotFound
+	}
+
+	res := p.db.Model(&ds.User{}).
+		Where("id IN ?", ids).
+		Update("is_active", false)
+	if res.Error != nil {
+		return nil, repository.HandelPgError(res.Error, "users")
+	}
+
+	return ids, nil
+}
+
 func (p *Postgres) GetReviewDB(user_id string) (ds.User, error) {
 	var user ds.User
 	err := p.db.Model(&ds.User{}).Preload("Assigned").Where("id = ?", user_id).First(&user).Error

@@ -1,16 +1,17 @@
-package service
+package team_test
 
 import (
 	"reviewer-api/internal/app/dto"
 	"reviewer-api/internal/app/repository"
 	"reviewer-api/internal/app/repository/mocks"
+	"reviewer-api/internal/app/service/team"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTeamService_GetTeam_Success(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{})
+	svc := team.NewTeamService(mocks.MockTeamRepo{})
 
 	team, err := svc.GetTeam("team-1")
 
@@ -19,7 +20,7 @@ func TestTeamService_GetTeam_Success(t *testing.T) {
 }
 
 func TestTeamService_GetTeam_Error(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{GetErr: true})
+	svc := team.NewTeamService(mocks.MockTeamRepo{GetErr: true})
 
 	_, err := svc.GetTeam("team-1")
 
@@ -28,7 +29,7 @@ func TestTeamService_GetTeam_Error(t *testing.T) {
 }
 
 func TestTeamService_AddTeam_EmptyName(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{})
+	svc := team.NewTeamService(mocks.MockTeamRepo{})
 
 	_, err := svc.AddTeam(dto.TeamDTO{
 		Name:    "",
@@ -39,7 +40,7 @@ func TestTeamService_AddTeam_EmptyName(t *testing.T) {
 }
 
 func TestTeamService_AddTeam_Success(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{})
+	svc := team.NewTeamService(mocks.MockTeamRepo{})
 
 	team, err := svc.AddTeam(dto.TeamDTO{
 		Name: "team-1",
@@ -55,7 +56,7 @@ func TestTeamService_AddTeam_Success(t *testing.T) {
 }
 
 func TestTeamService_AddTeam_CreateTeamError(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{CreateErr: true})
+	svc := team.NewTeamService(mocks.MockTeamRepo{CreateErr: true})
 
 	_, err := svc.AddTeam(dto.TeamDTO{
 		Name: "team-1",
@@ -66,7 +67,7 @@ func TestTeamService_AddTeam_CreateTeamError(t *testing.T) {
 }
 
 func TestTeamService_AddTeam_CreateMembersError(t *testing.T) {
-	svc := NewTeamService(mocks.MockTeamRepo{MembersErr: true})
+	svc := team.NewTeamService(mocks.MockTeamRepo{MembersErr: true})
 
 	_, err := svc.AddTeam(dto.TeamDTO{
 		Name: "team-1",

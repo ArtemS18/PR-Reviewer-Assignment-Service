@@ -3,6 +3,8 @@ package postgres
 import (
 	"log"
 	"reviewer-api/internal/app/ds"
+	"reviewer-api/internal/app/service/pull_request"
+	"reviewer-api/internal/app/service/team"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,4 +35,17 @@ func NewPostgers(dsn string, autoMigrate bool) (*Postgres, error) {
 		log.Println("success migrate db")
 	}
 	return &Postgres{db}, nil
+}
+
+func (p *Postgres) WithPRTransaction(fn pull_request.TxFunc) error {
+	return p.db.Transaction(func(tx *gorm.DB) error {
+		txRepo := &Postgres{db: tx}
+		return fn(txRepo)
+	})
+}
+func (p *Postgres) WithTeamTransaction(fn team.TxFunc) error {
+	return p.db.Transaction(func(tx *gorm.DB) error {
+		txRepo := &Postgres{db: tx}
+		return fn(txRepo)
+	})
 }

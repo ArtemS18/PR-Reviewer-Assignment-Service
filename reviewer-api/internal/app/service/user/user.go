@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"reviewer-api/internal/app/ds"
@@ -8,6 +8,7 @@ type UserRepository interface {
 	SetUserFlagDB(user_id string, is_active bool) (ds.User, error)
 	GetReviewDB(user_id string) (ds.User, error)
 }
+
 type UserService struct {
 	repo UserRepository
 }
